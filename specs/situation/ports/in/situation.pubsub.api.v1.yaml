@@ -1,0 +1,22 @@
+openapi: 3.0.0
+info:
+  title: Situation Pub/Sub API
+  version: '1.0'
+  description: ''
+servers:
+  - url: 'http://localhost:3000'
+paths: {}
+components:
+  schemas:
+    Situation:
+      title: Situation
+      type: object
+      properties:
+        id:
+          type: string
+    Subscription:
+      title: Subscription
+      type: object
+      properties:
+        id:
+          type: string

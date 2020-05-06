@@ -1,0 +1,246 @@
+openapi: 3.0.0
+info:
+  title: device.management.api
+  version: '1.0'
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /sensingDevices:
+    get:
+      summary: List all sensing devices
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SensingDevice'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+      operationId: get-sensingDevices
+    post:
+      summary: Register a Sensing Device
+      operationId: registerSensingDevices
+      responses:
+        '204':
+          description: No Content
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+            application/xml:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensingDeviceRegistration'
+  '/sensingDevices/{key}':
+    parameters:
+      - schema:
+          type: string
+        name: key
+        in: path
+        required: true
+    get:
+      summary: View a sensing device
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SensingDevice'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+      operationId: getSensingDevicesByKey
+  '/sensingDevices/{key}/properties':
+    parameters:
+      - schema:
+          type: string
+        name: key
+        in: path
+        required: true
+    get:
+      summary: List all observable property from a device
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ObservableProperty'
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+        '':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ObservableProperty'
+      operationId: listObservableProperties
+    post:
+      summary: ''
+      operationId: registerObservableProperty
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+        '422':
+          description: Unprocessable Entity (WebDAV)
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SensingDeviceRegistration'
+  '/sensingDevices/{key}/properties/{propertyId}':
+    parameters:
+      - schema:
+          type: string
+        name: propertyId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: key
+        in: path
+        required: true
+    get:
+      summary: View a observable property
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObservableProperty'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: ./ProblemDetails.v1.yaml
+      operationId: getObservablePropertyById
+components:
+  schemas:
+    SensingDevice:
+      title: SensingDevice
+      type: object
+      properties:
+        key:
+          type: string
+        description:
+          type: string
+        props:
+          type: array
+          items:
+            type: string
+        metadata:
+          type: array
+          items:
+            $ref: ./Metadata.v1.yaml
+      required:
+        - key
+        - description
+        - props
+        - metadata
+    SensingDeviceRegistration:
+      title: SensingDeviceRegistration
+      type: object
+      properties:
+        key:
+          type: string
+        description:
+          type: string
+        metadata:
+          type: array
+          items:
+            $ref: ./Metadata.v1.yaml
+      required:
+        - key
+        - description
+    ObservableProperty:
+      title: ObservableProperty
+      type: object
+      x-tags:
+        - SensingDevice
+      properties:
+        identifier:
+          type: string
+        label:
+          type: string
+        uri:
+          type: string
+        ownerId:
+          type: string
+        metadata:
+          $ref: ./Metadata.v1.yaml
+      required:
+        - identifier
+        - label
+        - uri
+        - ownerId
+        - metadata

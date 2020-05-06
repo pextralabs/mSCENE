@@ -1,0 +1,464 @@
+openapi: 3.0.0
+info:
+  title: Situation Detection Management API
+  version: 0.1.0
+  description: mSCENE Situation Detection Management API
+  license:
+    name: MIT
+  contact:
+    name: Isaac Pereira
+    email: pereira.zc@gmail.com
+servers:
+  - url: 'http://localhost:3000'
+paths:
+  /entities:
+    get:
+      summary: Search Domain Entities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entity'
+        '204':
+          description: No Content
+      operationId: getEntities
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: kind
+      description: Search domain entities by kind
+      tags:
+        - Entities
+    post:
+      summary: Create a new domain entity
+      operationId: createEntity
+      responses:
+        '201':
+          description: Created
+          headers: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEntity'
+        description: ''
+      description: "Creates a new entity into application's domain"
+      tags:
+        - Entities
+  '/entities/{entityId}':
+    parameters:
+      - schema:
+          type: string
+        name: entityId
+        in: path
+        required: true
+    get:
+      summary: Get an Entity by Id
+      tags:
+        - Entities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ../../../common/ProblemDetails.v1.yaml
+      operationId: getEntityById
+      description: Get an entity object by its Id
+    patch:
+      summary: Updates Entity
+      operationId: updateEntity
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+      description: Updates entity with new descriptor
+      tags:
+        - Entities
+  /relations:
+    post:
+      summary: Create Relational Context
+      operationId: createRelation
+      responses:
+        '201':
+          description: Created
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewRelation'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/NewRelation'
+      description: Creates a relational context between entities
+      tags:
+        - Contexts
+    get:
+      summary: Search Relational Contexts
+      operationId: searchRelations
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No Content
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: kind
+        - schema:
+            type: string
+          in: query
+          name: with
+      tags:
+        - Contexts
+      description: Search relational contexts by its kind or by entities involved in it
+  '/entities/{entityId}/attributes':
+    parameters:
+      - schema:
+          type: string
+        name: entityId
+        in: path
+        required: true
+    post:
+      summary: Add Attributes to Entity
+      operationId: addAttributesToEntity
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+      tags:
+        - Entities
+      description: Adds attributes to an entity
+  '/entities/{entityId}/contexts':
+    parameters:
+      - schema:
+          type: string
+        name: entityId
+        in: path
+        required: true
+    post:
+      summary: Create a new Intrinsic Context
+      operationId: createIntrinsicContext
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ../../../common/ProblemDetails.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewIntrinsic'
+      description: Creates a new intrinsic context for the entity
+      tags:
+        - Entities
+  '/contexts/{contextId}':
+    parameters:
+      - schema:
+          type: string
+        name: contextId
+        in: path
+        required: true
+    get:
+      summary: Get Context Element By Id
+      tags:
+        - Contexts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnyContext'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ../../../common/ProblemDetails.v1.yaml
+      operationId: getContextById
+      description: Fetch intrinsic or relational context objects by its id
+    patch:
+      summary: Update Context
+      operationId: updateContext
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ''
+      description: Updates a context with new binding or label values
+      tags:
+        - Contexts
+  '/contexts/{contextId}/data':
+    parameters:
+      - schema:
+          type: string
+        name: contextId
+        in: path
+        required: true
+    get:
+      summary: Fetch context data collection
+      tags:
+        - Contexts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContextData'
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ../../../common/ProblemDetails.v1.yaml
+      operationId: getContextData
+      description: Fetch context data events (search can be limited by length or time-based sliding windows)
+      parameters:
+        - schema:
+            type: integer
+            format: int32
+          in: query
+          name: last
+          description: Used to limit the search to the last (N) events
+        - schema:
+            type: string
+            format: date-time
+          in: query
+          name: since
+          description: Used to limit the search to any event more fresher than the provided datetime
+    post:
+      summary: Insert Context Data Event
+      operationId: createContextData
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: ../../../common/ProblemDetails.v1.yaml
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                $ref: ../../../common/ProblemDetails.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContextData'
+      description: "Inserts a context data event into the context's data stream"
+      tags:
+        - Contexts
+  /situations:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses: {}
+      operationId: getDeclaredSituations
+      requestBody: {}
+    post:
+      summary: ''
+      operationId: declareSituation
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: object
+              properties: {}
+components:
+  schemas:
+    NewEntity:
+      title: NewEntity
+      type: object
+      description: ''
+      properties:
+        descriptor:
+          type: string
+        kind:
+          type: string
+        attributes:
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+      required:
+        - descriptor
+        - kind
+    Entity:
+      title: FullEntity
+      type: object
+      description: ''
+      properties:
+        attributes:
+          type: object
+          additionalProperties:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+        kind:
+          type: string
+        descriptor:
+          type: string
+        id:
+          type: string
+          format: uuid
+        contexts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AnyContext'
+      required:
+        - kind
+        - descriptor
+        - id
+    Context:
+      title: Context
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        kind:
+          type: string
+        uri:
+          type: string
+          format: uri
+        from:
+          type: string
+          format: uri
+        label:
+          type: string
+      required:
+        - id
+        - kind
+        - uri
+      description: ''
+    ContextData:
+      title: ContextData
+      type: object
+      properties:
+        timestamp:
+          type: string
+        value:
+          type: object
+      required:
+        - timestamp
+      description: ''
+    NewContext:
+      title: NewContext
+      type: object
+      properties:
+        kind:
+          type: string
+        from:
+          type: string
+          format: uri
+        label:
+          type: string
+      required:
+        - kind
+        - label
+    RelationalContext:
+      allOf:
+        - $ref: '#/components/schemas/Context'
+        - $ref: '#/components/schemas/RelationalParts'
+    EntityRef:
+      type: string
+      title: EntityRef
+      format: uri
+      description: URI Reference for an entity
+    IntrinsicContext:
+      title: IntrinsicContext
+      allOf:
+        - $ref: '#/components/schemas/Context'
+        - type: object
+          properties:
+            bearer:
+              $ref: '#/components/schemas/EntityRef'
+    RelationalParts:
+      type: object
+      title: RelationalParts
+      additionalProperties:
+        $ref: '#/components/schemas/EntityRef'
+    ContextRef:
+      title: ContextRef
+      type: object
+      description: Reference URI for a context element
+      properties:
+        id:
+          type: string
+          format: uri
+    NewRelation:
+      title: NewRelation
+      allOf:
+        - $ref: '#/components/schemas/NewContext'
+        - $ref: '#/components/schemas/RelationalParts'
+    NewIntrinsic:
+      title: NewIntrinsic
+      allOf:
+        - $ref: '#/components/schemas/NewContext'
+    AnyContext:
+      title: AnyContext
+      oneOf:
+        - $ref: '#/components/schemas/IntrinsicContext'
+        - $ref: '#/components/schemas/RelationalContext'
+    Situation:
+      title: Situation
+      type: object
+      properties:
+        id:
+          type: string
+        uri:
+          type: string
+        label:
+          type: string
+        rule:
+          type: string
+        status:
+          type: string
+tags:
+  - name: Entities
+    description: Everything about domain entities
+  - name: Contexts
+    description: Everything about context elements from entities

@@ -1,0 +1,16 @@
+title: ProblemDetails
+type: object
+properties:
+  title:
+    type: string
+  status:
+    type: string
+  type:
+    type: string
+  details:
+    type: string
+required:
+  - title
+  - status
+  - type
+  - details

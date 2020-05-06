@@ -1,0 +1,13 @@
+title: Metadata
+type: object
+properties:
+  name:
+    type: string
+  value:
+    type: string
+  kind:
+    type: string
+required:
+  - name
+  - value
+  - kind
