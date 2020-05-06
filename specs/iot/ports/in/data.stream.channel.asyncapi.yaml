@@ -1,0 +1,44 @@
+asyncapi: 2.0.0
+info:
+  title: mSCENE application
+  version: '0.1.0'
+servers:
+  production:
+    url: broker.mycompany.com
+    protocol: amqp
+    description: This is "My Company" broker.
+channels:
+  hello:
+    subscribe:
+      message:
+        payload:
+
+components:
+  schemas:
+    KeyValue:
+      type: object
+      required:
+        - key
+        - value
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+  messages:
+    Observation:
+      type: object
+      required:
+        - timestamp
+        - raw
+        - values
+      properties:
+        timestamp: 
+          type: interger
+          format: int64
+        raw:
+          type: string
+        values:
+          type: array
+            items:
+              $ref: '#/components/schemas/KeyValue'
