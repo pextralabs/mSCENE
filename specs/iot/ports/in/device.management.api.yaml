@@ -23,7 +23,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
       operationId: get-sensingDevices
     post:
       summary: Register a Sensing Device
@@ -36,16 +36,16 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
             application/xml:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
       requestBody:
         content:
           application/json:
@@ -73,13 +73,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
       operationId: getSensingDevicesByKey
   '/sensingDevices/{key}/properties':
     parameters:
@@ -105,13 +105,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
         '':
           content:
             application/json:
@@ -131,19 +131,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
         '422':
           description: Unprocessable Entity (WebDAV)
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
       requestBody:
         content:
           application/json:
@@ -176,13 +176,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: ./ProblemDetails.v1.yaml
+                $ref: ../../../common/ProblemDetails.v1.yaml
       operationId: getObservablePropertyById
 components:
   schemas:
